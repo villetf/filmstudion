@@ -3,7 +3,7 @@ using API.Models.Entities;
 
 namespace API.Models.DTOs;
 
-public class ReturnAllStudiosAdminDTO
+public class ReturnStudioAdminDTO
 {
    public int Id { get; set; }
    public required string Name { get; set; }

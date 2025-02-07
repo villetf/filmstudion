@@ -30,7 +30,12 @@ public class UserRepository : IUserRepository
    }
 
    public async Task<User?> GetUserByGuid(string guid)
-  {
-   return await _context.Users.FirstOrDefaultAsync(u => u.UserGuid.ToString() == guid);
-  }
+   {
+      return await _context.Users.FirstOrDefaultAsync(u => u.UserGuid.ToString() == guid);
+   }
+
+   public async Task<User?> GetUserByStudioId(int id)
+   {
+      return await _context.Users.FirstOrDefaultAsync(u => u.FilmStudioId == id);
+   }
 }

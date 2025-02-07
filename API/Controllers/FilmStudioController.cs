@@ -15,20 +15,21 @@ namespace API.Controllers
    {
       private readonly IFilmStudioRepository _studioRepository;
       private readonly IUserRepository _userRepository;
-      private readonly IUserService _userService;
+      private readonly IHelperServices _helperServices;
       private readonly IRentalsRepository _rentalsRepository;
-      public FilmStudioController(IFilmStudioRepository studioRepository, IUserService userService, IUserRepository userRepository, IRentalsRepository rentalsRepository) 
+      public FilmStudioController(IFilmStudioRepository studioRepository, IHelperServices helperServices, IUserRepository userRepository, IRentalsRepository rentalsRepository) 
       {
          _studioRepository = studioRepository;
-         _userService = userService;
+         _helperServices = helperServices;
          _userRepository = userRepository;
          _rentalsRepository = rentalsRepository;
       }
 
+      // Endpoint för att registera filmstudio (skapar också en användare för studion)
       [HttpPost("register")]
       public async Task<ActionResult<IFilmStudio>> RegisterStudio(RegisterFilmStudioDTO registrationInfo)
       {
-         if (await _userService.UserExistsAsync(registrationInfo.Name) == true)
+         if (await _helperServices.UserExistsAsync(registrationInfo.Name) == true)
          {
             return BadRequest(new {message="En användare med detta användarnamn finns redan."});
          }
@@ -49,24 +50,25 @@ namespace API.Controllers
             FilmStudioId = createdStudio.Id
          };
          
-         _userService.RegisterUser(newUser);
+         _helperServices.RegisterUser(newUser);
 
          return Ok(newStudio);
       }
 
+      // Endpoint för att hämta alla filmstudior
       [HttpGet("/api/filmstudios")]
       public async Task<ActionResult<IEnumerable<FilmStudio>>> GetStudios()
       {
-         Console.WriteLine(Regex.Replace(Request.Headers.Authorization, "^Bearer ", ""));
-         var loggedInUser = await _userRepository.GetUserByGuid(Regex.Replace(Request.Headers.Authorization, "^Bearer ", ""));
+         // var loggedInUser = await _userRepository.GetUserByGuid(Regex.Replace(Request.Headers.Authorization, "^Bearer ", ""));
+         bool isAdmin = await _helperServices.UserIsAdmin(Request.Headers.Authorization!);
          var studios = await _studioRepository.GetAllStudios();
 
-         if (loggedInUser != null && loggedInUser.Role == "admin")
+         if (isAdmin == true)
          {
-            List<ReturnAllStudiosAdminDTO> returnAdminList = [];
+            List<ReturnStudioAdminDTO> returnAdminList = [];
             foreach (var studio in studios)
             {
-               var currentStudio = new ReturnAllStudiosAdminDTO
+               var currentStudio = new ReturnStudioAdminDTO
                {
                   Id = studio.Id,
                   Name = studio.Name,
@@ -79,10 +81,10 @@ namespace API.Controllers
             return Ok(returnAdminList);
          }
          
-         List<ReturnAllStudiosNonAdminDTO> returnNonAdminList = [];
+         List<ReturnStudioNonAdminDTO> returnNonAdminList = [];
          foreach (var studio in studios)
          {
-            var currentStudio = new ReturnAllStudiosNonAdminDTO
+            var currentStudio = new ReturnStudioNonAdminDTO
             {
                Id = studio.Id,
                Name = studio.Name
@@ -91,6 +93,42 @@ namespace API.Controllers
          }
          
          return Ok(returnNonAdminList);
+      }
+
+      // Endpoint för att hämta filmstudio från ID
+      [HttpGet("{id}")]
+      public async Task<ActionResult<FilmStudio>> GetSingleStudio(int id)
+      {
+         var studio = await _studioRepository.GetStudioById(id);
+
+         if (studio == null)
+         {
+            return NotFound(new {message=$"Hittade ingen studio med id {id}."});
+         }
+
+         bool isAdmin = await _helperServices.UserIsAdmin(Request.Headers.Authorization!);
+         var studioUser = await _userRepository.GetUserByStudioId(id);
+
+         if (studioUser != null && (isAdmin == true || studioUser.UserGuid.ToString() == _helperServices.RemoveBearerWord(Request.Headers.Authorization!)))
+         {
+            var studioToReturnAdmin = new ReturnStudioAdminDTO
+            {
+               Id = studio.Id,
+               Name = studio.Name,
+               City = studio.City!,
+               RentedFilmCopies = await _rentalsRepository.GetRentalsByStudio(studio.Id)
+            };
+
+            return Ok(studioToReturnAdmin);
+         }
+
+         var studioToReturnNonAdmin = new ReturnStudioNonAdminDTO
+         {
+            Id = studio.Id,
+            Name = studio.Name
+         };
+
+         return Ok(studioToReturnNonAdmin);
       }
    }
 }

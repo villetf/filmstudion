@@ -9,4 +9,5 @@ public interface IUserRepository
    public void CreateNewUser(User user);
    public Task<User?> GetUserByUsername(string username);
    public Task<User?> GetUserByGuid(string guid);
+   public Task<User?> GetUserByStudioId(int id);
 }
