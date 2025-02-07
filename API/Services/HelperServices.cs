@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using API.Controllers;
 using API.Models.DTOs;
 using API.Models.Entities;
@@ -7,10 +8,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace API.Services;
 
-public class UserService : IUserService
+public class HelperServices : IHelperServices
 {
    private readonly IUserRepository _usersRepository;
-   public UserService(IUserRepository usersRepository) 
+   public HelperServices(IUserRepository usersRepository) 
    {
       _usersRepository = usersRepository;
    }
@@ -58,5 +59,21 @@ public class UserService : IUserService
       }
 
       return false;
+   }
+
+   public async Task<bool> UserIsAdmin(string? authHeader)
+   {
+      var user = await _usersRepository.GetUserByGuid(RemoveBearerWord(authHeader!));
+      if (user != null && user.Role == "admin")
+      {
+         return true;
+      }
+
+      return false;
+   }
+
+   public string RemoveBearerWord(string key)
+   {
+      return Regex.Replace(key,  "^Bearer ", "");
    }
 }

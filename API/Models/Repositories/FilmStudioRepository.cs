@@ -32,8 +32,8 @@ public class FilmStudioRepository : IFilmStudioRepository
       throw new NotImplementedException();
    }
 
-   public Task<FilmStudio> GetStudioById()
+   public async Task<FilmStudio?> GetStudioById(int id)
    {
-      throw new NotImplementedException();
+      return await _context.FilmStudios.FirstOrDefaultAsync(s => s.Id == id);
    }
 }

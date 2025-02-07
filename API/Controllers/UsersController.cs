@@ -14,41 +14,22 @@ namespace API.Controllers
    public class UsersController : ControllerBase
    {
       private readonly IUserRepository _usersRepository;
-      private readonly IUserService _userService;
-      public UsersController(IUserRepository usersRepository, IUserService userService) 
+      private readonly IHelperServices _helperServices;
+      public UsersController(IUserRepository usersRepository, IHelperServices helperServices) 
       {
          _usersRepository = usersRepository;
-         _userService = userService;
+         _helperServices = helperServices;
       }
 
       [HttpPost("register")]
       public async Task<ActionResult> Register(UserRegisterDTO userCreds)
       {
-         Console.WriteLine();
-         Console.WriteLine();
-         Console.WriteLine();
-         Console.WriteLine();
-         Console.WriteLine();
-         Console.WriteLine();
-         Console.WriteLine();
-         Console.WriteLine();
-         Console.WriteLine("test");
-         Console.WriteLine(await _userService.UserExistsAsync(userCreds.Username) == true);
-         Console.WriteLine();
-         Console.WriteLine();
-         Console.WriteLine();
-         Console.WriteLine();
-         Console.WriteLine();
-         Console.WriteLine();
-         Console.WriteLine();
-         Console.WriteLine();
-         Console.WriteLine();
-         if (await _userService.UserExistsAsync(userCreds.Username) == true)
+         if (await _helperServices.UserExistsAsync(userCreds.Username) == true)
          {
             return BadRequest(new {message="En användare med detta användarnamn finns redan."});
          }
 
-         return Ok(_userService.RegisterUser(userCreds));
+         return Ok(_helperServices.RegisterUser(userCreds));
       }
 
       [HttpPost("authenticate")]
