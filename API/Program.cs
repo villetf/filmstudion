@@ -13,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFilmStudioRepository, FilmStudioRepository>();
+builder.Services.AddScoped<IRentalsRepository, RentalsRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddDbContext<AppDbContext>(options => 
 {

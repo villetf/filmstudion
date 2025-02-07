@@ -2,6 +2,7 @@ using System;
 using API.Data;
 using API.Models.Entities;
 using API.Models.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Models.Repositories;
 
@@ -21,9 +22,9 @@ public class FilmStudioRepository : IFilmStudioRepository
       return studio;
    }
 
-   public Task<IEnumerable<FilmStudio>> GetAllStudios()
+   public async Task<IEnumerable<FilmStudio>> GetAllStudios()
    {
-      throw new NotImplementedException();
+      return await _context.FilmStudios.ToListAsync();
    }
 
    public Task<IEnumerable<Rental>> GetRentalsByStudio(int id)
