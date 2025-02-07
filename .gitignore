@@ -1,6 +1,7 @@
 # Backend (ASP.NET Core/.NET)
 bin/
 obj/
+Migrations/
 *.user
 *.suo
 *.cache

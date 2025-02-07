@@ -1,23 +1,31 @@
 using System;
+using API.Data;
 using API.Models.Entities;
 using API.Models.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Models.Repositories;
 
 public class UserRepository : IUserRepository
 {
+   private readonly AppDbContext _context;
+   public UserRepository(AppDbContext appDbContext)
+   {
+      _context = appDbContext;
+   }
    public Task<bool> AuthenticateUser()
    {
       throw new NotImplementedException();
    }
 
-   public Task<User> CreateNewUser()
+   public void CreateNewUser(User user)
    {
-      throw new NotImplementedException();
+      _context.Users.Add(user);
+      _context.SaveChanges();
    }
 
-   public Task<User> GetUserByEmail(string email)
+   public async Task<User?> GetUserByUsername(string username)
    {
-      throw new NotImplementedException();
+      return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
    }
 }
