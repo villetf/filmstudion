@@ -3,8 +3,8 @@ using API.Models.Interfaces;
 
 namespace API.Models.DTOs;
 
-public class UserRegister : IUserRegister
+public class UserAuthenticateDTO : IUserAuthenticate
 {
-   public required string Email { get; set; }
+   public required string Username { get; set; }
    public required string Password { get; set; }
 }

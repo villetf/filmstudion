@@ -3,7 +3,7 @@ using API.Models.Interfaces;
 
 namespace API.Models.DTOs;
 
-public class CreateFilm : ICreateFilm
+public class CreateFilmDTO : ICreateFilm
 {
    public required string Name { get; set; }
    public int ReleaseYear { get; set; }

@@ -1,4 +1,5 @@
 using System;
+using API.Data;
 using API.Models.Entities;
 using API.Models.Interfaces;
 
@@ -6,9 +7,18 @@ namespace API.Models.Repositories;
 
 public class FilmStudioRepository : IFilmStudioRepository
 {
-   public Task<FilmStudio> CreateNewStudio(FilmStudio studio)
+   private readonly AppDbContext _context;
+   public FilmStudioRepository(AppDbContext appDbContext)
    {
-      throw new NotImplementedException();
+      _context = appDbContext;
+   }
+
+
+   public async Task<FilmStudio> CreateNewStudio(FilmStudio studio)
+   {
+      await _context.FilmStudios.AddAsync(studio);
+      await _context.SaveChangesAsync();
+      return studio;
    }
 
    public Task<IEnumerable<FilmStudio>> GetAllStudios()
