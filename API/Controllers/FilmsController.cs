@@ -55,6 +55,32 @@ namespace API.Controllers
          }
 
          return Ok(await _filmRepository.AddNewFilm(film));
-      } 
+      }
+
+      [HttpGet("{id}")]
+      public async Task<ActionResult<Film>> GetMovieById(int id)
+      {
+         var user = await _userRepository.GetUserByGuid(_helperServices.RemoveBearerWord(Request.Headers.Authorization!));
+         var film = await _filmRepository.GetFilmById(id);
+
+         if (film == null)
+         {
+            return NotFound(new {message=$"Filmen med ID {id} finns inte."});
+         }
+
+         if (user == null)
+         {
+            
+            ReturnFilmNonAdmin filmToReturn = new ReturnFilmNonAdmin
+            {
+               Id = film.Id,
+               Name = film.Name,
+               ReleaseYear = film.ReleaseYear
+            };
+            return Ok(filmToReturn);
+         }
+
+         return Ok(film);
+      }
    }
 }
