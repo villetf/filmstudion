@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using API.Data;
 using API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,11 @@ public class FilmRepository : IFilmRepository
       _context = appDbContext;
    }
 
-   public void AddNewFilm(Film film)
+   public async Task<Film> AddNewFilm(Film film)
    {
-      throw new NotImplementedException();
+      _context.Films.Add(film);
+      await _context.SaveChangesAsync();
+      return film;
    }
 
    public Task<Film> EditFilm(Film film)

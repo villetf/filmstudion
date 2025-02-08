@@ -5,7 +5,7 @@ namespace API.Models.Interfaces;
 
 public interface IFilmRepository
 {
-   public void AddNewFilm(Film film);
+   public Task<Film> AddNewFilm(Film film);
    public Task<IEnumerable<Film>> GetAllFilms();
    public Task<Film?> GetFilmById(int id);
    public void MakeRental(Film film, int studioId);
