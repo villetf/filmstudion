@@ -82,5 +82,17 @@ namespace API.Controllers
 
          return Ok(film);
       }
+
+      [HttpPut]
+      public async Task<ActionResult<Film>> EditFilm(Film film)
+      {
+         if (await _helperServices.UserIsAdmin(Request.Headers.Authorization!) == false)
+         {
+            return Unauthorized(new {message="Du har inte behörighet att göra detta."});
+         }
+
+         return Ok(await _filmRepository.EditFilm(film));
+         
+      }
    }
 }

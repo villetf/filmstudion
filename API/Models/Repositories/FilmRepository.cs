@@ -21,9 +21,11 @@ public class FilmRepository : IFilmRepository
       return film;
    }
 
-   public Task<Film> EditFilm(Film film)
+   public async Task<Film> EditFilm(Film film)
    {
-      throw new NotImplementedException();
+      _context.Films.Update(film);
+      await _context.SaveChangesAsync();
+      return film;
    }
 
    public async Task<IEnumerable<Film>> GetAllFilms()
