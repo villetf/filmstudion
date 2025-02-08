@@ -72,8 +72,13 @@ public class HelperServices : IHelperServices
       return false;
    }
 
-   public string RemoveBearerWord(string key)
+   public string RemoveBearerWord(string? key)
    {
+      if (key == null)
+      {
+         return key!;
+      }
+
       return Regex.Replace(key,  "^Bearer ", "");
    }
 }
