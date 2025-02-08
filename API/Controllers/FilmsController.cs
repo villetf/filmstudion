@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class FilmsController : ControllerBase
-    {
+   [Route("api/[controller]")]
+   [ApiController]
+   public class FilmsController : ControllerBase
+   {
       private readonly IFilmRepository _filmRepository;
       private readonly IUserRepository _userRepository;
       private readonly IHelperServices _helperServices;
@@ -45,5 +45,16 @@ namespace API.Controllers
 
          return films.ToList();
       }
-    }
+      
+      [HttpPost]
+      public async Task<ActionResult<Film>> CreateFilm(Film film)
+      {
+         if (await _helperServices.UserIsAdmin(Request.Headers.Authorization!) == false)
+         {
+            return Unauthorized(new {message="Du har inte behörighet att göra detta."});
+         }
+
+         return Ok(await _filmRepository.AddNewFilm(film));
+      } 
+   }
 }
