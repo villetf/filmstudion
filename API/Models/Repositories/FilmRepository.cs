@@ -37,14 +37,4 @@ public class FilmRepository : IFilmRepository
    {
       return await _context.Films.FindAsync(id);
    }
-
-   public void MakeRental(Film film, int studioId)
-   {
-      throw new NotImplementedException();
-   }
-
-   public void ReturnRental(Film film, int studioId)
-   {
-      throw new NotImplementedException();
-   }
 }
