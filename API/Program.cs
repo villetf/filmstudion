@@ -14,6 +14,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFilmStudioRepository, FilmStudioRepository>();
 builder.Services.AddScoped<IRentalsRepository, RentalsRepository>();
+builder.Services.AddScoped<IFilmRepository, FilmRepository>();
 builder.Services.AddScoped<IHelperServices, HelperServices>();
 builder.Services.AddDbContext<AppDbContext>(options => 
 {

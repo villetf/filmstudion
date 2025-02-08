@@ -17,12 +17,14 @@ namespace API.Controllers
       private readonly IUserRepository _userRepository;
       private readonly IHelperServices _helperServices;
       private readonly IRentalsRepository _rentalsRepository;
-      public FilmStudioController(IFilmStudioRepository studioRepository, IHelperServices helperServices, IUserRepository userRepository, IRentalsRepository rentalsRepository) 
+      private readonly IFilmRepository _filmRepository;
+      public FilmStudioController(IFilmStudioRepository studioRepository, IHelperServices helperServices, IUserRepository userRepository, IRentalsRepository rentalsRepository, IFilmRepository filmRepository) 
       {
          _studioRepository = studioRepository;
          _helperServices = helperServices;
          _userRepository = userRepository;
          _rentalsRepository = rentalsRepository;
+         _filmRepository = filmRepository;
       }
 
       // Endpoint för att registera filmstudio (skapar också en användare för studion)
@@ -129,6 +131,35 @@ namespace API.Controllers
          };
 
          return Ok(studioToReturnNonAdmin);
+      }
+  
+      [HttpGet("/api/mystudio/rentals")]
+      public async Task<ActionResult<IEnumerable<FilmCopy>>> GetOwnRentals()
+      {
+         var user = await _userRepository.GetUserByGuid(_helperServices.RemoveBearerWord(Request.Headers.Authorization!));
+         
+         if (user == null || user.Role != "studio")
+         {
+            return Unauthorized(new {message="Du har inte behörighet att göra detta."});
+         }
+
+         var studio = await _studioRepository.GetStudioById(user.FilmStudioId);
+         var rentedFilms = await _rentalsRepository.GetRentalsByStudio(studio!.Id);
+
+         List<FilmCopy> returnList = [];
+
+         foreach (var rental in rentedFilms)
+         {
+            var currentRental = new FilmCopy
+            {
+               RentalId = rental.Id,
+               Film = await _filmRepository.GetFilmById(rental.FilmId)
+            };
+
+            returnList.Add(currentRental);
+         }
+
+         return Ok(returnList);
       }
    }
 }
