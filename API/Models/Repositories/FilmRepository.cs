@@ -1,6 +1,7 @@
 using System;
 using API.Data;
 using API.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Models.Interfaces;
 
@@ -22,9 +23,9 @@ public class FilmRepository : IFilmRepository
       throw new NotImplementedException();
    }
 
-   public Task<IEnumerable<Film>> GetAllFilms()
+   public async Task<IEnumerable<Film>> GetAllFilms()
    {
-      throw new NotImplementedException();
+      return await _context.Films.ToListAsync();
    }
 
    public async Task<Film?> GetFilmById(int id)
