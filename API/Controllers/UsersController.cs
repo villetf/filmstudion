@@ -15,10 +15,12 @@ namespace API.Controllers
    {
       private readonly IUserRepository _usersRepository;
       private readonly IHelperServices _helperServices;
-      public UsersController(IUserRepository usersRepository, IHelperServices helperServices) 
+      private readonly IFilmStudioRepository _filmStudioRepository;
+      public UsersController(IUserRepository usersRepository, IHelperServices helperServices, IFilmStudioRepository filmStudioRepository) 
       {
          _usersRepository = usersRepository;
          _helperServices = helperServices;
+         _filmStudioRepository = filmStudioRepository;
       }
 
       [HttpPost("register")]
@@ -45,12 +47,30 @@ namespace API.Controllers
          var passwordGenerator = new PasswordHasher<string>();
          var result = passwordGenerator.VerifyHashedPassword(string.Empty, userToLogin.PasswordHash, creds.Password);
 
-         if (result == PasswordVerificationResult.Success)
+         if (result == PasswordVerificationResult.Failed)
          {
-            return Ok(new {message="Inloggad", token = userToLogin.UserGuid});
+            return Unauthorized(new {message="Felaktigt användarnamn eller lösenord!"});
          }
 
-         return Unauthorized(new {message="Felaktigt användarnamn eller lösenord!"});
+         if (userToLogin.Role == "filmstudio")
+         {
+            return Ok(new {
+               id = userToLogin.Id,
+               username = userToLogin.Username,
+               role = userToLogin.Role,
+               filmStudioId = userToLogin.FilmStudioId,
+               filmStudio = await _filmStudioRepository.GetStudioById(userToLogin.FilmStudioId),
+               guid = userToLogin.UserGuid
+            });
+         } else
+         {
+            return Ok(new {
+               id = userToLogin.Id,
+               username = userToLogin.Username,
+               role = userToLogin.Role,
+               guid = userToLogin.UserGuid
+            });
+         }
       }
    }
 }

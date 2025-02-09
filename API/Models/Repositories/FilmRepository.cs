@@ -37,4 +37,9 @@ public class FilmRepository : IFilmRepository
    {
       return await _context.Films.FindAsync(id);
    }
+
+   public Task<bool> FilmExists(int id)
+   {
+      return _context.Films.AnyAsync(f => f.Id == id);
+   }
 }
