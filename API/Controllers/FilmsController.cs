@@ -3,6 +3,7 @@ using API.Models.Entities;
 using API.Models.Interfaces;
 using API.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -120,7 +121,7 @@ namespace API.Controllers
 
          if (_rentalsRepository.StudioRentsThisMovie(studioId, id) == true)
          {
-            return StatusCode(StatusCodes.Status403Forbidden, new { message = "Din studio hyr redan den här filmen." });
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = "Studion hyr redan den här filmen." });
          }
 
          _rentalsRepository.MakeRental(film, studioId);
@@ -128,5 +129,33 @@ namespace API.Controllers
          return Ok(new {message="Uthyrning lyckades!"});
       }
 
+      [HttpPost("return")]
+      public async Task<ActionResult> ReturnRental([FromQuery]int id, [FromQuery]int studioId)
+      {
+         var user = await _userRepository.GetUserByGuid(_helperServices.RemoveBearerWord(Request.Headers.Authorization!));
+         bool userIsAdmin = await _helperServices.UserIsAdmin(_helperServices.RemoveBearerWord(Request.Headers.Authorization!));
+         if (user == null || (userIsAdmin == false && user.FilmStudioId != studioId))
+         {
+            return Unauthorized(new {message="Du har inte behörighet att göra detta."});
+         }
+
+         var film = await _filmRepository.GetFilmById(id);
+
+         if (film == null)
+         {
+            return Conflict(new {message="Filmen du angett finns inte."});
+         }  
+
+         if (_rentalsRepository.StudioRentsThisMovie(studioId, id) == false)
+         {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = "Studion hyr inte den här filmen." });
+         }
+
+         var rental = await _rentalsRepository.GetRentedFilm(film.Id, studioId);
+
+         _rentalsRepository.ReturnRental(rental, studioId);
+         _rentalsRepository.IncreaseStock(film);
+         return Ok(new {message="Återlämning lyckades!"});
+      }
    }
 }
