@@ -138,7 +138,7 @@ namespace API.Controllers
       {
          var user = await _userRepository.GetUserByGuid(_helperServices.RemoveBearerWord(Request.Headers.Authorization!));
          
-         if (user == null || user.Role != "studio")
+         if (user == null || user.Role != "filmstudio")
          {
             return Unauthorized(new {message="Du har inte behörighet att göra detta."});
          }
@@ -153,7 +153,7 @@ namespace API.Controllers
             var currentRental = new FilmCopy
             {
                RentalId = rental.Id,
-               Film = await _filmRepository.GetFilmById(rental.FilmId)
+               Film = await _filmRepository.GetFilmById(rental.FilmId)!
             };
 
             returnList.Add(currentRental);

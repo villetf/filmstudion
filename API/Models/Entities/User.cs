@@ -10,5 +10,6 @@ public class User : IUser
    public required string PasswordHash { get; set; }
    public required string Role { get; set; }
    public int? FilmStudioId { get; set; } 
+   public FilmStudio? FilmStudio { get; set; } 
    public Guid UserGuid { get; set; }
 }

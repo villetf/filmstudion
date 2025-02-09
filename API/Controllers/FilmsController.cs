@@ -86,13 +86,20 @@ namespace API.Controllers
          return Ok(film);
       }
 
-      [HttpPut]
-      public async Task<ActionResult<Film>> EditFilm(Film film)
+      [HttpPut("{id}")]
+      public async Task<ActionResult<Film>> EditFilm(int id, Film film)
       {
          if (await _helperServices.UserIsAdmin(Request.Headers.Authorization!) == false)
          {
             return Unauthorized(new {message="Du har inte behörighet att göra detta."});
          }
+
+         if (await _filmRepository.FilmExists(id) == false)
+         {
+            return NotFound(new {message="Denna filmen finns inte."});
+         }
+
+         film.Id = id;
 
          return Ok(await _filmRepository.EditFilm(film));
       }

@@ -9,4 +9,5 @@ public interface IFilmRepository
    public Task<IEnumerable<Film>> GetAllFilms();
    public Task<Film?> GetFilmById(int id);
    public Task<Film> EditFilm(Film film);
+   public Task<bool> FilmExists(int id);
 }

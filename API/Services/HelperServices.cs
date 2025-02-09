@@ -28,7 +28,7 @@ public class HelperServices : IHelperServices
       }
       else
       {
-         role = "studio";
+         role = "filmstudio";
       }
 
       User user = new User
