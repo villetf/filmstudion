@@ -16,7 +16,7 @@ public class RentalsRepository : IRentalsRepository
 
    public async Task<IEnumerable<Rental>> GetRentalsByStudio(int id)
    {
-      return await _context.Rentals.Where(r => r.StudioId == id).ToListAsync();
+      return await _context.Rentals.Where(r => r.StudioId == id && r.IsReturned == false).ToListAsync();
    }
 
    public void MakeRental(Film film, int studioId)
@@ -32,9 +32,11 @@ public class RentalsRepository : IRentalsRepository
       _context.SaveChanges();
    }
 
-   public void ReturnRental(Film film, int studioId)
+   public void ReturnRental(Rental rental, int studioId)
    {
-      throw new NotImplementedException();
+      rental.IsReturned = true;
+      _context.Rentals.Update(rental);
+      _context.SaveChanges();
    }
 
    public bool StudioRentsThisMovie(int studioId, int filmId)
@@ -47,5 +49,17 @@ public class RentalsRepository : IRentalsRepository
       film.AvailableCopies--;
       _context.Films.Update(film);
       _context.SaveChanges();
+   }
+
+   public void IncreaseStock(Film film)
+   {
+      film.AvailableCopies++;
+      _context.Films.Update(film);
+      _context.SaveChanges();
+   }
+
+   public Task<Rental> GetRentedFilm(int filmId, int studioId)
+   {
+      return _context.Rentals.FirstAsync(r => (r.StudioId == studioId) && (r.FilmId == filmId) && r.IsReturned == false);
    }
 }
