@@ -1,20 +1,29 @@
 import { createNewElement } from "./createNewElement";
-import { makeLogin } from "./apiCalls";
+import { insertLogoutButton } from "./helpers";
+import { makeLogin } from "./makeLogin";
+import { generateAllFilmsView } from "./generateAllFilmsView";
+import { generateRentedView } from "./generateRentedView";
+
+export const mainContent = document.getElementById('app')!;
+
+
 
 if (localStorage.getItem('userGuid')) {
-   const loginForm = document.getElementById('login')!;
-   loginForm.innerHTML = '';
-   const logoutButton = createNewElement('button', 'Logga ut', null, 'text-base border bg-gray-200 ml-3 rounded-md px-3 py-3 cursor-pointer', loginForm);
-   logoutButton.onclick = () => {
-      localStorage.removeItem('userGuid');
-      location.reload();
-   }
+   insertLogoutButton();
+   createNewElement('h1', 'Välkommen!', null, 'text-6xl mt-[35%]', mainContent)
+} else {
+   createNewElement('h1', 'Logga in uppe till höger', null, 'text-6xl mt-[35%]', mainContent)
 }
 
-const loginButton = document.getElementById('loginButton')!;
-loginButton.onclick = () => {
-   const username = (document.getElementById('username')! as HTMLInputElement).value;
-   const password = (document.getElementById('password')! as HTMLInputElement).value;
-   const answer = makeLogin(username, password);
-   console.log(answer);
+document.getElementById('loginButton')!.onclick = () => {
+   makeLogin();
 }
+
+document.getElementById('allfilms')!.onclick = () => {
+   generateAllFilmsView();
+}
+
+document.getElementById('rented')!.onclick = () => {
+   generateRentedView()
+}
+

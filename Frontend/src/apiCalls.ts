@@ -1,7 +1,7 @@
 
 
-export function makeLogin(username:string, password:string) {
-   fetch('http://localhost:5134/api/Users/authenticate', {
+export async function makeLoginCall(username:string, password:string) {
+   return fetch('http://localhost:5134/api/Users/authenticate', {
       method: 'POST',
       headers: {
          'Content-Type': 'application/json'
@@ -11,6 +11,10 @@ export function makeLogin(username:string, password:string) {
          password: password
       })
    })
-   .then(res => res.json())
-   .then(data => data)
+   .then(async (res) => {
+      return {
+         status: res.status,
+         data: await res.json()
+      }
+   })
 }

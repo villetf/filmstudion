@@ -10,8 +10,8 @@
    </head>
    <body class="h-screen w-screen">
       <header class="flex items-center justify-around h-1/15 w-full bg-red-100 text-xl">
-         <div id="allFilms">Alla filmer</div>
-         <div id="rented">Filmstudions hyrda filmer</div>
+         <div id="allFilms" class="cursor-pointer">Alla filmer</div>
+         <div id="rented" class="cursor-pointer">Filmstudions hyrda filmer</div>
          <div id="login" class="flex">
             <form class="text-base text-right">
                <label for="username">Användarnamn: </label>
@@ -22,7 +22,7 @@
             <button id="loginButton" class="text-base border bg-gray-200 ml-3 rounded-md px-3 py-3 cursor-pointer">Logga in</button>
          </div>
       </header>
-      <div id="app"></div>
+      <div id="app" class="flex flex-col items-center"></div>
       
    </body>
 </html>
