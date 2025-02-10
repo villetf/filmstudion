@@ -24,6 +24,9 @@ export async function createFilmsGallery(allFilms:Film[]) {
       }
 
       const copiesText = createNewElement('h5', `Antal exemplar: ${film.availableCopies} st`, null, null, filmDiv);
+      if (!localStorage.getItem('studioId')) {
+         return;
+      }
       const rentButton = createNewElement('button', 'Hyr', null, 'border cursor-pointer px-3 mt-1 rounded-lg', filmDiv);
       rentButton.onclick = () => {
          copiesText.innerText = `Antal exemplar: ${film.availableCopies - 1} st`
