@@ -12,7 +12,15 @@
       <header class="flex items-center justify-around h-1/15 w-full bg-red-100 text-xl">
          <div id="allFilms">Alla filmer</div>
          <div id="rented">Filmstudions hyrda filmer</div>
-         <div id="login">Logga in</div>
+         <div id="login" class="flex">
+            <form class="text-base text-right">
+               <label for="username">Användarnamn: </label>
+               <input id="username" type="text" name="username" class="border"><br>
+               <label for="password">Lösenord: </label>
+               <input id="password" type="password" name="password" class="border mt-1">
+            </form>
+            <button id="loginButton" class="text-base border bg-gray-200 ml-3 rounded-md px-3 py-3 cursor-pointer">Logga in</button>
+         </div>
       </header>
       <div id="app"></div>
       
