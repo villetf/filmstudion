@@ -15,6 +15,7 @@ export async function makeLogin() {
    localStorage.setItem('userGuid', answer.data.guid);
    if (answer.data.filmStudioId) {
       localStorage.setItem('studioId', answer.data.filmStudioId)
+      document.getElementById('rented')?.classList.remove('hidden');
    }
    insertLogoutButton();
    mainContent.innerHTML = '';
