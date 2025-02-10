@@ -18,3 +18,23 @@ export async function makeLoginCall(username:string, password:string) {
       }
    })
 }
+
+export async function getAllFilms() {
+   return fetch('http://localhost:5134/api/Films', {
+      method: 'GET',
+      headers: {
+         'Authorization': localStorage.getItem('userGuid') ?? ''
+      }
+   })
+   .then(async res => await res.json())
+}
+
+export async function getStudiosRentals() {
+   return fetch('http://localhost:5134/api/mystudio/rentals', {
+      method: 'GET',
+      headers: {
+         'Authorization': localStorage.getItem('userGuid') ?? ''
+      }
+   })
+   .then(async res => await res.json())
+}

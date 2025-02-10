@@ -13,7 +13,8 @@ export async function makeLogin() {
    }
 
    localStorage.setItem('userGuid', answer.data.guid);
+   localStorage.setItem('studioId', answer.data.studioId)
    insertLogoutButton();
    mainContent.innerHTML = '';
-   createNewElement('h1', 'Välkommen!', null, 'text-6xl mt-[35%]', mainContent)
+   createNewElement('h1', 'Välkommen!', null, 'text-6xl mt-[37vh]', mainContent);
 }
