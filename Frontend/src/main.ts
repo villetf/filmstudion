@@ -11,6 +11,9 @@ export const mainContent = document.getElementById('app')!;
 if (localStorage.getItem('userGuid')) {
    insertLogoutButton();
    createNewElement('h1', 'Välkommen!', null, 'text-6xl mt-[37vh]', mainContent)
+   if (localStorage.getItem('studioId')) {
+      document.getElementById('rented')?.classList.remove('hidden');
+   }
 } else {
    createNewElement('h1', 'Logga in uppe till höger', null, 'text-6xl mt-[37vh]', mainContent)
 }
