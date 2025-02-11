@@ -14,7 +14,7 @@ export async function generateRentedView() {
    });
 
    if (rentedFilmsList.length > 0) {
-      createFilmsGallery(rentedFilmsList);
+      createFilmsGallery(rentedFilmsList, 'rented');
    } else {
       createNewElement('h3', 'Du har inga hyrda filmer.', null, 'text-xl py-10', mainContent);
    }

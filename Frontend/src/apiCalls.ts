@@ -39,7 +39,7 @@ export async function getStudiosRentals() {
    .then(async res => await res.json())
 }
 
-export async function postNewRental(filmId:number) {
+export async function postNewRental(filmId: number) {
    return fetch(`http://localhost:5134/api/films/rent?id=${filmId}&studioId=${localStorage.getItem('studioId')}`, {
       method: 'POST',
       headers: {
@@ -52,4 +52,29 @@ export async function postNewRental(filmId:number) {
          data: await res.json()
       }
    })
+}
+
+export async function postNewReturnal(filmId: number) {
+   return fetch(`http://localhost:5134/api/films/return?id=${filmId}&studioId=${localStorage.getItem('studioId')}`, {
+      method: 'POST',
+      headers: {
+         'Authorization': localStorage.getItem('userGuid') ?? ''
+      }
+   })
+   .then(async (res) => {
+      return {
+         status: res.status,
+         data: await res.json()
+      }
+   })
+}
+
+export async function getFilmInfo(filmId: number) {
+   return fetch(`http://localhost:5134/api/films/${filmId}`, {
+      method: 'GET',
+      headers: {
+         'Authorization': localStorage.getItem('userGuid') ?? ''
+      }
+   })
+   .then(async res => res.json())
 }

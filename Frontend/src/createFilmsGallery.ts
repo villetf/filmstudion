@@ -1,11 +1,10 @@
 import { mainContent } from "./main";
 import { createNewElement } from "./createNewElement";
 import { Film, Rental } from "./interfaces";
-import { getStudiosRentals, postNewRental } from "./apiCalls";
-import { generateRentedView } from "./generateRentedView";
+import { getFilmInfo, getStudiosRentals, postNewRental, postNewReturnal } from "./apiCalls";
 
 
-export async function createFilmsGallery(allFilms:Film[]) {
+export async function createFilmsGallery(allFilms:Film[], currentView:string) {
    let studioRentals:Rental[];
    const rentedIds:number[] = [];
    if (localStorage.getItem('studioId')) {
@@ -29,27 +28,43 @@ export async function createFilmsGallery(allFilms:Film[]) {
          return;
       }
       const rentButton = createNewElement('button', 'Hyr', null, 'border cursor-pointer px-3 mt-1 rounded-lg', filmDiv) as HTMLButtonElement;
-      rentButton.onclick = async () => {
-         const rentAction = await postNewRental(film.id);
-         if (rentAction.status != 200) {
-            alert(`${rentAction.data.message}`);
-            return;
-         }
-
-         insertReturnButton(rentButton, copiesText, film);
-         copiesText.innerText = `Antal tillgängliga exemplar: ${film.availableCopies - 1} st`;
-      }
+      insertRentButton(rentButton, copiesText, film, currentView);
 
       if (studioRentals && rentedIds.includes(film.id)) {
-         insertReturnButton(rentButton, copiesText, film);
+         insertReturnButton(rentButton, copiesText, film, currentView);
       }
    });   
 }
 
+function insertRentButton(rentButton:HTMLButtonElement, copiesText:HTMLTitleElement, film:Film, currentView:string) {
+   rentButton.innerText = 'Hyr';   
+   rentButton.onclick = async () => {
+      console.log('Hyr ut...');
+      const rentAction = await postNewRental(film.id);
+      if (rentAction.status != 200) {
+         alert(`${rentAction.data.message}`);
+         return;
+      }
 
-function insertReturnButton(rentButton:HTMLButtonElement, copiesText:HTMLTitleElement, film:Film) {
+      insertReturnButton(rentButton, copiesText, film, currentView);
+      copiesText.innerText = `Antal tillgängliga exemplar: ${(await getFilmInfo(film.id)).availableCopies} st`;
+   }
+}
+
+function insertReturnButton(rentButton:HTMLButtonElement, copiesText:HTMLTitleElement, film:Film, currentView:string) {
    rentButton.innerText = 'Lämna tillbaka';
-   rentButton.onclick = () => {
-      copiesText.innerText = `Antal tillgängliga exemplar: ${film.availableCopies - 1} st`;
+   rentButton.onclick = async () => {
+      const returnAction = await postNewReturnal(film.id);
+      if (returnAction.status != 200) {
+         alert(`${returnAction.data.message}`);
+         return;
+      }
+
+      if (currentView == 'rented') {
+         rentButton.parentElement?.remove();
+      }
+
+      insertRentButton(rentButton, copiesText, film, currentView);
+      copiesText.innerText = `Antal tillgängliga exemplar: ${(await getFilmInfo(film.id)).availableCopies} st`;
    }
 }
