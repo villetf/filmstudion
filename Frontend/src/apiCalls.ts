@@ -38,3 +38,18 @@ export async function getStudiosRentals() {
    })
    .then(async res => await res.json())
 }
+
+export async function postNewRental(filmId:number) {
+   return fetch(`http://localhost:5134/api/films/rent?id=${filmId}&studioId=${localStorage.getItem('studioId')}`, {
+      method: 'POST',
+      headers: {
+         'Authorization': localStorage.getItem('userGuid') ?? ''
+      }
+   })
+   .then(async (res) => {
+      return {
+         status: res.status,
+         data: await res.json()
+      }
+   })
+}
