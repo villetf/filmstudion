@@ -16,18 +16,14 @@ builder.Services.AddScoped<IFilmStudioRepository, FilmStudioRepository>();
 builder.Services.AddScoped<IRentalsRepository, RentalsRepository>();
 builder.Services.AddScoped<IFilmRepository, FilmRepository>();
 builder.Services.AddScoped<IHelperServices, HelperServices>();
-builder.Services.AddDbContext<AppDbContext>(options => 
-{
-   options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), 
-   ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection")));
-});
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("filmstudion"));
 builder.Services.AddCors(opt => {
-    opt.AddDefaultPolicy(policy => 
-    {
-        policy.AllowAnyHeader();
-        policy.AllowAnyMethod();
-        policy.AllowAnyOrigin();
-    });
+   opt.AddDefaultPolicy(policy => 
+   {
+      policy.AllowAnyHeader();
+      policy.AllowAnyMethod();
+      policy.AllowAnyOrigin();
+   });
 });
 
 
