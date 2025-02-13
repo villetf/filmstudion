@@ -39,7 +39,6 @@ export async function createFilmsGallery(allFilms:Film[], currentView:string) {
 function insertRentButton(rentButton:HTMLButtonElement, copiesText:HTMLTitleElement, film:Film, currentView:string) {
    rentButton.innerText = 'Hyr';   
    rentButton.onclick = async () => {
-      console.log('Hyr ut...');
       const rentAction = await postNewRental(film.id);
       if (rentAction.status != 200) {
          alert(`${rentAction.data.message}`);
